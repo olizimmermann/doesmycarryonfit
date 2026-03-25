@@ -24,34 +24,42 @@ body:
       required: false
 
   - type: input
-    id: dims
+    id: dims_cm
     attributes:
-      label: Cabin dimensions (H × W × D in cm)
+      label: Cabin dimensions — cm (H × W × D)
       placeholder: "e.g. 56 × 36 × 23"
     validations:
       required: true
 
   - type: input
+    id: dims_in
+    attributes:
+      label: Cabin dimensions — in (H × W × D), if available
+      placeholder: "e.g. 22.0 × 14.1 × 9.0"
+    validations:
+      required: false
+
+  - type: input
     id: sum
     attributes:
-      label: Total linear dimension limit (cm), if stated
-      placeholder: "e.g. 115"
+      label: Total linear dimension limit, if stated instead of H×W×D
+      placeholder: "e.g. 115 cm / 45 in"
     validations:
       required: false
 
   - type: input
     id: eco_weight
     attributes:
-      label: Economy weight limit (kg)
-      placeholder: "e.g. 7  — enter N/A if not specified"
+      label: Economy weight limit
+      placeholder: "e.g. 7 kg / 15.4 lbs — enter N/A if not specified"
     validations:
       required: true
 
   - type: input
     id: biz_weight
     attributes:
-      label: Business weight limit (kg)
-      placeholder: "e.g. 10  — enter N/A if not specified"
+      label: Business weight limit
+      placeholder: "e.g. 10 kg / 22 lbs — enter N/A if not specified"
     validations:
       required: false
 

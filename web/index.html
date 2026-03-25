@@ -88,28 +88,28 @@
             <span>Height</span>
             <div class="input-wrap">
               <input type="number" id="input-h" min="1" max="120" value="55" inputmode="decimal" autocomplete="off">
-              <span class="unit">cm</span>
+              <span class="unit dim-unit">cm</span>
             </div>
           </label>
           <label>
             <span>Width</span>
             <div class="input-wrap">
               <input type="number" id="input-w" min="1" max="120" value="40" inputmode="decimal" autocomplete="off">
-              <span class="unit">cm</span>
+              <span class="unit dim-unit">cm</span>
             </div>
           </label>
           <label>
             <span>Depth</span>
             <div class="input-wrap">
               <input type="number" id="input-d" min="1" max="120" value="23" inputmode="decimal" autocomplete="off">
-              <span class="unit">cm</span>
+              <span class="unit dim-unit">cm</span>
             </div>
           </label>
           <label>
             <span>Weight <small class="optional">(optional)</small></span>
             <div class="input-wrap">
-              <input type="number" id="input-weight" min="0" max="60" step="0.1" placeholder="—" inputmode="decimal" autocomplete="off">
-              <span class="unit">kg</span>
+              <input type="number" id="input-weight" min="0" max="200" step="0.1" placeholder="—" inputmode="decimal" autocomplete="off">
+              <span class="unit weight-unit">kg</span>
             </div>
           </label>
         </div>
@@ -118,6 +118,10 @@
           <div class="class-toggle" role="group" aria-label="Cabin class">
             <button class="class-btn active" data-cls="economy">Economy</button>
             <button class="class-btn" data-cls="business">Business</button>
+          </div>
+          <div class="unit-toggle" role="group" aria-label="Unit">
+            <button class="unit-btn active" data-unit="cm">cm</button>
+            <button class="unit-btn" data-unit="in">in</button>
           </div>
           <button class="copy-link-btn" id="copy-link-btn" title="Copy shareable link to this luggage configuration">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>

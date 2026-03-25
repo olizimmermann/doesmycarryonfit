@@ -31,7 +31,7 @@ body:
     id: current
     attributes:
       label: Current values on the site
-      placeholder: "e.g. 55 × 40 × 23 cm, 8 kg economy"
+      placeholder: "e.g. 55 × 40 × 23 cm / 21.5 × 15.7 × 9.0 in, 8 kg / 17.6 lbs economy"
     validations:
       required: true
 
@@ -39,7 +39,8 @@ body:
     id: correct
     attributes:
       label: Correct values
-      placeholder: "e.g. 55 × 40 × 20 cm, 10 kg economy"
+      description: "Please include both cm and in values if available."
+      placeholder: "e.g. 55 × 40 × 20 cm / 21.5 × 15.7 × 7.8 in, 10 kg / 22 lbs economy"
     validations:
       required: true
 

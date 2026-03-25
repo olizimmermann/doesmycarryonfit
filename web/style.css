@@ -225,6 +225,29 @@ main { flex: 1; padding: 28px 0 48px; }
 }
 .class-btn:hover:not(.active) { color: var(--text); }
 
+.unit-toggle {
+  display: flex;
+  gap: 2px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+}
+
+.unit-btn {
+  font-size: .8rem;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: calc(var(--radius-sm) - 2px);
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all .15s;
+}
+.unit-btn.active  { background: var(--accent); color: #fff; }
+.unit-btn:hover:not(.active) { color: var(--text); }
+
 .copy-link-btn {
   display: inline-flex;
   align-items: center;
@@ -444,6 +467,8 @@ footer {
 @media (max-width: 680px) {
   .dimension-inputs { grid-template-columns: repeat(2, 1fr); }
 
+  .input-card { padding: 16px; }
+
   .header-inner h1 { font-size: 1rem; }
   .kofi-btn span { display: none; }
 
@@ -458,7 +483,8 @@ footer {
 
   /* Minimum 44px touch targets */
   .preset-btn  { min-height: 44px; padding: 10px 16px; }
-  .class-btn   { min-height: 40px; padding: 8px 16px; }
+  .class-btn,
+  .unit-btn    { min-height: 40px; padding: 8px 16px; }
   .filter-tab  { min-height: 40px; padding: 8px 14px; }
   .copy-link-btn,
   .kofi-btn    { min-height: 44px; padding: 10px 16px; }
@@ -502,17 +528,22 @@ footer {
   }
   .col-dims {
     grid-area: dims;
-    display: block;      /* override desktop hide */
-    font-size: .78rem;
+    display: block;
+    font-size: .82rem;   /* up from .78rem — more readable on mobile */
     color: var(--text-muted);
   }
   .col-weight {
     grid-area: weight;
-    font-size: .78rem;
+    font-size: .82rem;
   }
-  .col-weight:not(:empty)::before {
+  /* Show "Weight: " label only when there's an actual limit (not the — placeholder) */
+  .col-weight:not(:has(.muted))::before {
     content: "Weight: ";
     color: var(--text-muted);
+  }
+  /* Hide the weight row entirely when N/A — keeps cards clean */
+  .col-weight:has(.muted) {
+    display: none;
   }
   .col-status {
     grid-area: status;
@@ -524,6 +555,10 @@ footer {
 }
 
 @media (max-width: 420px) {
-  .options-row { flex-direction: column; align-items: flex-start; }
+  .options-row   { flex-direction: column; align-items: flex-start; }
+  .class-toggle,
+  .unit-toggle   { width: 100%; }
+  .class-btn,
+  .unit-btn      { flex: 1; justify-content: center; }
   .copy-link-btn { width: 100%; justify-content: center; }
 }
