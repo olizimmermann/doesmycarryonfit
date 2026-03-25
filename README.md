@@ -1,6 +1,6 @@
 # Does My Carry-On Fit?
 
-**[doesmycarryon.fit](https://doesmycarryon.fit)** — instantly check if your carry-on luggage meets cabin size requirements for 95 airlines.
+**[doesmycarryon.fit](https://doesmycarryon.fit)** — instantly check if your carry-on luggage meets cabin size requirements for 94 airlines.
 
 Default preset is the **Rimowa Original Cabin** (55 × 40 × 23 cm). Enter any custom dimensions and bookmark the URL to save your bag.
 
@@ -8,7 +8,7 @@ Default preset is the **Rimowa Original Cabin** (55 × 40 × 23 cm). Enter any c
 
 ## Features
 
-- 95 airlines with cabin dimensions and weight limits
+- 94 airlines with cabin dimensions and weight limits
 - Economy / Business class toggle
 - Optional weight check
 - Bookmarkable URLs — `?h=55&w=40&d=23&kg=4.2&cls=economy`
