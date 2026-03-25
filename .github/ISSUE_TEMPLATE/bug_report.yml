@@ -1,0 +1,51 @@
+name: "🐛 Bug Report"
+description: "Something on the site is broken or behaves unexpectedly."
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please describe the bug clearly. Screenshots are welcome.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      placeholder: "Describe the bug..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+
+  - type: input
+    id: url
+    attributes:
+      label: URL when the bug occurred
+      description: "Paste the full URL (it may contain your luggage dimensions)"
+      placeholder: "https://doesmycarryon.fit/?h=55&w=40&d=23"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: device
+    attributes:
+      label: Device type
+      options:
+        - Desktop
+        - Mobile
+        - Tablet
+    validations:
+      required: true
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser & version
+      placeholder: "e.g. Safari 17, Chrome 123"
+    validations:
+      required: false

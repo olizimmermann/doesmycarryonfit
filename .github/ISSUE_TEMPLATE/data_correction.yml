@@ -1,0 +1,60 @@
+name: "✏️ Data Correction"
+description: "Airline dimensions or weight limits are wrong or outdated."
+labels: ["data"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for keeping the data accurate. Please fill in as much detail as you can and link to an official source if possible.
+
+  - type: input
+    id: airline
+    attributes:
+      label: Airline name
+      placeholder: "e.g. Lufthansa"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: field
+    attributes:
+      label: What needs correcting?
+      options:
+        - Cabin dimensions (H × W × D)
+        - Economy weight limit
+        - Business weight limit
+        - Multiple fields
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current values on the site
+      placeholder: "e.g. 55 × 40 × 23 cm, 8 kg economy"
+    validations:
+      required: true
+
+  - type: textarea
+    id: correct
+    attributes:
+      label: Correct values
+      placeholder: "e.g. 55 × 40 × 20 cm, 10 kg economy"
+    validations:
+      required: true
+
+  - type: input
+    id: source
+    attributes:
+      label: Source (official airline page preferred)
+      placeholder: "https://www.airline.com/en/baggage/carry-on"
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: "Route-specific rules, recent policy changes, etc."
+    validations:
+      required: false

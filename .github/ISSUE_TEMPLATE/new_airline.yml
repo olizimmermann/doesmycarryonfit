@@ -1,0 +1,64 @@
+name: "✈️ New Airline Request"
+description: "Request to add an airline that is not yet listed."
+labels: ["new airline"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please provide the official cabin size policy for the airline you'd like added.
+
+  - type: input
+    id: airline
+    attributes:
+      label: Airline name
+      placeholder: "e.g. Batik Air"
+    validations:
+      required: true
+
+  - type: input
+    id: iata
+    attributes:
+      label: IATA code
+      placeholder: "e.g. ID"
+    validations:
+      required: false
+
+  - type: input
+    id: dims
+    attributes:
+      label: Cabin dimensions (H × W × D in cm)
+      placeholder: "e.g. 56 × 36 × 23"
+    validations:
+      required: true
+
+  - type: input
+    id: sum
+    attributes:
+      label: Total linear dimension limit (cm), if stated
+      placeholder: "e.g. 115"
+    validations:
+      required: false
+
+  - type: input
+    id: eco_weight
+    attributes:
+      label: Economy weight limit (kg)
+      placeholder: "e.g. 7  — enter N/A if not specified"
+    validations:
+      required: true
+
+  - type: input
+    id: biz_weight
+    attributes:
+      label: Business weight limit (kg)
+      placeholder: "e.g. 10  — enter N/A if not specified"
+    validations:
+      required: false
+
+  - type: input
+    id: source
+    attributes:
+      label: Source (official airline page)
+      placeholder: "https://www.airline.com/en/baggage/carry-on"
+    validations:
+      required: true

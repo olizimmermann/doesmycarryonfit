@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Check if your carry-on luggage fits in the cabin for 95 airlines. Enter your bag dimensions — default preset is the Rimowa Original Cabin. Bookmark your custom size.">
+  <meta name="keywords" content="carry-on size checker, cabin luggage dimensions, airline hand luggage, Rimowa Original Cabin, carry-on fit, luggage size by airline">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Does My Carry-On Fit? — Cabin Size Checker for 95 Airlines">
+  <meta property="og:description" content="Instantly check if your carry-on meets cabin size requirements for 95 airlines. Default preset: Rimowa Original Cabin. Bookmark your custom dimensions.">
+  <meta property="og:url" content="https://doesmycarryon.fit/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="doesmycarryon.fit">
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Does My Carry-On Fit? — Cabin Size Checker for 95 Airlines">
+  <meta name="twitter:description" content="Check cabin size requirements for 95 airlines. Default: Rimowa Original Cabin. Bookmarkable custom dimensions.">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://doesmycarryon.fit/">
+
+  <!-- Favicon (emoji, zero weight) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧳</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧳</text></svg>">
+
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <title>Does My Carry-On Fit? — Cabin Size Checker for 95 Airlines</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Does My Carry-On Fit?",
+    "url": "https://doesmycarryon.fit/",
+    "description": "Check if your carry-on luggage meets cabin size requirements for 95 airlines. Default preset: Rimowa Original Cabin.",
+    "applicationCategory": "TravelApplication",
+    "operatingSystem": "Any",
+    "browserRequirements": "Requires JavaScript",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Oliver Zimmermann",
+      "url": "https://github.com/olizimmermann"
+    }
+  }
+  </script>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <div>
+          <h1>Does My Carry-On Fit?</h1>
+          <p class="tagline">Cabin size check · 95 airlines</p>
+        </div>
+        <a href="https://ko-fi.com/olizimmermann" target="_blank" rel="noopener noreferrer" class="kofi-btn">
+          ☕ <span>Buy me a coffee</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+
+      <!-- Luggage input -->
+      <section class="input-card" aria-label="Luggage dimensions">
+        <div class="presets" role="group" aria-label="Presets">
+          <button class="preset-btn active" data-preset="rimowa">Rimowa Original Cabin</button>
+          <button class="preset-btn" data-preset="custom">Custom</button>
+        </div>
+
+        <div class="dimension-inputs">
+          <label>
+            <span>Height</span>
+            <div class="input-wrap">
+              <input type="number" id="input-h" min="1" max="120" value="55" inputmode="decimal" autocomplete="off">
+              <span class="unit">cm</span>
+            </div>
+          </label>
+          <label>
+            <span>Width</span>
+            <div class="input-wrap">
+              <input type="number" id="input-w" min="1" max="120" value="40" inputmode="decimal" autocomplete="off">
+              <span class="unit">cm</span>
+            </div>
+          </label>
+          <label>
+            <span>Depth</span>
+            <div class="input-wrap">
+              <input type="number" id="input-d" min="1" max="120" value="23" inputmode="decimal" autocomplete="off">
+              <span class="unit">cm</span>
+            </div>
+          </label>
+          <label>
+            <span>Weight <small class="optional">(optional)</small></span>
+            <div class="input-wrap">
+              <input type="number" id="input-weight" min="0" max="60" step="0.1" placeholder="—" inputmode="decimal" autocomplete="off">
+              <span class="unit">kg</span>
+            </div>
+          </label>
+        </div>
+
+        <div class="options-row">
+          <div class="class-toggle" role="group" aria-label="Cabin class">
+            <button class="class-btn active" data-cls="economy">Economy</button>
+            <button class="class-btn" data-cls="business">Business</button>
+          </div>
+          <button class="copy-link-btn" id="copy-link-btn" title="Copy shareable link to this luggage configuration">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy link
+          </button>
+        </div>
+      </section>
+
+      <!-- Summary bar -->
+      <div class="summary">
+        <p class="summary-text" id="summary-text"></p>
+        <div class="progress-bar" role="progressbar" aria-label="Pass rate">
+          <div class="bar-fill" id="summary-bar-fill"></div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <section aria-label="Airline results">
+        <div class="results-header">
+          <div class="filter-tabs" role="tablist" aria-label="Filter results">
+            <button class="filter-tab active" role="tab" data-filter="all">
+              All <span class="count" id="count-all"></span>
+            </button>
+            <button class="filter-tab" role="tab" data-filter="pass">
+              Pass <span class="count" id="count-pass"></span>
+            </button>
+            <button class="filter-tab" role="tab" data-filter="fail">
+              Fail <span class="count" id="count-fail"></span>
+            </button>
+          </div>
+          <div class="search-wrap">
+            <input type="search" id="airline-search" placeholder="Search airlines…" aria-label="Search airlines">
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Airline</th>
+                <th scope="col" class="col-dims">Max Dimensions (H × W × D)</th>
+                <th scope="col">Weight Limit</th>
+                <th scope="col" style="text-align:right">Fits?</th>
+              </tr>
+            </thead>
+            <tbody id="results-body">
+              <tr><td colspan="4" style="padding:24px;text-align:center;color:var(--text-muted)">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <p class="disclaimer">
+          ⚠ Airline policies change frequently — this data may be outdated.
+          <a href="https://github.com/olizimmermann/doesmycarryonfit/issues" target="_blank" rel="noopener noreferrer">
+            Report an error or request an update →
+          </a>
+        </p>
+        <div class="footer-links">
+          <a href="https://ko-fi.com/olizimmermann" target="_blank" rel="noopener noreferrer">☕ Ko-fi</a>
+          <a href="https://github.com/olizimmermann/doesmycarryonfit" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
