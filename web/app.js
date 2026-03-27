@@ -4,19 +4,11 @@
 // Data
 // ---------------------------------------------------------------------------
 
-// cm: official EU dimensions — in: official US dimensions (Rimowa rounds up)
-const RIMOWA_ORIGINAL_CABIN = {
-  cm: { h: 55,   w: 40,   d: 23  },
-  in: { h: 21.7, w: 15.8, d: 9.1 },
-};
-const RIMOWA_CABIN_S = {
-  cm: { h: 55,   w: 40,   d: 20  },
-  in: { h: 21.7, w: 15.8, d: 7.9 },
-};
-const RIMOWA_CABIN_PLUS = {
-  cm: { h: 57,   w: 44,   d: 25  },
-  in: { h: 22.1, w: 17.8, d: 9.9 },
-};
+// Official cm dimensions. Inch values are derived via cmToIn() — not Rimowa's
+// rounded-up marketing values — so displayed and compared values always match.
+const RIMOWA_ORIGINAL_CABIN = { h: 55, w: 40, d: 23 };
+const RIMOWA_CABIN_S        = { h: 55, w: 40, d: 20 };
+const RIMOWA_CABIN_PLUS     = { h: 57, w: 44, d: 25 };
 
 // ---------------------------------------------------------------------------
 // Preset detection — runs synchronously before first paint
@@ -28,7 +20,10 @@ const RIMOWA_CABIN_PLUS = {
   const PRESET_MAP = { rimowa: RIMOWA_ORIGINAL_CABIN, 'rimowa-s': RIMOWA_CABIN_S, 'rimowa-plus': RIMOWA_CABIN_PLUS };
   let active = 'rimowa';
   if (p.has('h') || p.has('w') || p.has('d')) {
-    const match = Object.keys(PRESET_MAP).find(k => { const v = PRESET_MAP[k][unit]; return v.h === h && v.w === w && v.d === d; });
+    const cmH = unit === 'in' ? Math.round(h * 2.54) : h;
+    const cmW = unit === 'in' ? Math.round(w * 2.54) : w;
+    const cmD = unit === 'in' ? Math.round(d * 2.54) : d;
+    const match = Object.keys(PRESET_MAP).find(k => { const v = PRESET_MAP[k]; return v.h === cmH && v.w === cmW && v.d === cmD; });
     active = match || 'custom';
   }
   document.querySelector(`[data-preset="${active}"]`).classList.add('active');
@@ -185,18 +180,14 @@ function checkAirline(bag, airline, cabinClass, unit) {
 
 function getState() {
   const unit = document.querySelector('.unit-btn.active')?.dataset.unit || 'cm';
-  const h = parseFloat(document.getElementById('input-h').value) || RIMOWA_ORIGINAL_CABIN[unit].h;
-  const w = parseFloat(document.getElementById('input-w').value) || RIMOWA_ORIGINAL_CABIN[unit].w;
-  const d = parseFloat(document.getElementById('input-d').value) || RIMOWA_ORIGINAL_CABIN[unit].d;
+  const h = parseFloat(document.getElementById('input-h').value) || (unit === 'in' ? cmToIn(RIMOWA_ORIGINAL_CABIN.h) : RIMOWA_ORIGINAL_CABIN.h);
+  const w = parseFloat(document.getElementById('input-w').value) || (unit === 'in' ? cmToIn(RIMOWA_ORIGINAL_CABIN.w) : RIMOWA_ORIGINAL_CABIN.w);
+  const d = parseFloat(document.getElementById('input-d').value) || (unit === 'in' ? cmToIn(RIMOWA_ORIGINAL_CABIN.d) : RIMOWA_ORIGINAL_CABIN.d);
 
-  // For comparison, always use cm. If a preset is active use its cm values directly
-  // (avoids round-trip conversion errors from official inch values like 21.7→55.1cm).
-  const PRESET_MAP = { rimowa: RIMOWA_ORIGINAL_CABIN, 'rimowa-s': RIMOWA_CABIN_S, 'rimowa-plus': RIMOWA_CABIN_PLUS };
-  const activePreset = document.querySelector('.preset-btn.active')?.dataset.preset;
-  const cmPreset = activePreset && PRESET_MAP[activePreset] ? PRESET_MAP[activePreset].cm : null;
-  const cmH = unit === 'in' ? (cmPreset ? cmPreset.h : inToCm(h)) : h;
-  const cmW = unit === 'in' ? (cmPreset ? cmPreset.w : inToCm(w)) : w;
-  const cmD = unit === 'in' ? (cmPreset ? cmPreset.d : inToCm(d)) : d;
+  // Always compare in cm — convert inch inputs back to cm for comparison
+  const cmH = unit === 'in' ? inToCm(h) : h;
+  const cmW = unit === 'in' ? inToCm(w) : w;
+  const cmD = unit === 'in' ? inToCm(d) : d;
 
   return {
     h, w, d, cmH, cmW, cmD,
@@ -226,7 +217,7 @@ function readFromURL() {
   if (p.has('kg'))  document.getElementById('input-weight').value = p.get('kg');
   if (p.has('lbs')) document.getElementById('input-weight').value = p.get('lbs');
 
-  // Sync weight-unit label after unit is set
+  // Sync weight-unit label and note after unit is set
   const activeUnit = document.querySelector('.unit-btn.active')?.dataset.unit || 'cm';
   document.querySelectorAll('.weight-unit').forEach(el => { el.textContent = activeUnit === 'in' ? 'lbs' : 'kg'; });
   if (p.has('cls')) {
@@ -239,8 +230,11 @@ function readFromURL() {
   if (!isDefault) {
     const unit = document.querySelector('.unit-btn.active')?.dataset.unit || 'cm';
     const h = parseFloat(p.get('h')), w = parseFloat(p.get('w')), d = parseFloat(p.get('d'));
-    const PRESETS = { 'rimowa': RIMOWA_ORIGINAL_CABIN, 'rimowa-s': RIMOWA_CABIN_S, 'rimowa-plus': RIMOWA_CABIN_PLUS };
-    const matched = Object.entries(PRESETS).find(([, v]) => v[unit].h === h && v[unit].w === w && v[unit].d === d);
+    const cmH = unit === 'in' ? Math.round(h * 2.54) : h;
+    const cmW = unit === 'in' ? Math.round(w * 2.54) : w;
+    const cmD = unit === 'in' ? Math.round(d * 2.54) : d;
+    const PRESETS = { rimowa: RIMOWA_ORIGINAL_CABIN, 'rimowa-s': RIMOWA_CABIN_S, 'rimowa-plus': RIMOWA_CABIN_PLUS };
+    const matched = Object.entries(PRESETS).find(([, v]) => v.h === cmH && v.w === cmW && v.d === cmD);
     document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
     document.querySelector(`[data-preset="${matched ? matched[0] : 'custom'}"]`).classList.add('active');
   }
@@ -338,42 +332,28 @@ function renderTable(state) {
 
 function setPreset(preset) {
   document.querySelectorAll('.preset-btn').forEach(b => b.classList.toggle('active', b.dataset.preset === preset));
-  const PRESETS = {
-    'rimowa':       RIMOWA_ORIGINAL_CABIN,
-    'rimowa-s':     RIMOWA_CABIN_S,
-    'rimowa-plus':  RIMOWA_CABIN_PLUS,
-  };
+  const PRESETS = { rimowa: RIMOWA_ORIGINAL_CABIN, 'rimowa-s': RIMOWA_CABIN_S, 'rimowa-plus': RIMOWA_CABIN_PLUS };
   const data = PRESETS[preset];
   if (data) {
     const unit = document.querySelector('.unit-btn.active')?.dataset.unit || 'cm';
-    const r = data[unit];
-    document.getElementById('input-h').value = r.h;
-    document.getElementById('input-w').value = r.w;
-    document.getElementById('input-d').value = r.d;
+    document.getElementById('input-h').value = unit === 'in' ? cmToIn(data.h) : data.h;
+    document.getElementById('input-w').value = unit === 'in' ? cmToIn(data.w) : data.w;
+    document.getElementById('input-d').value = unit === 'in' ? cmToIn(data.d) : data.d;
     document.getElementById('input-weight').value = '';
   }
+  updatePresetNote();
 }
 
 function setUnit(unit) {
   const prev = document.querySelector('.unit-btn.active')?.dataset.unit || 'cm';
   if (unit === prev) return;
 
-  // If a luggage preset is active, use its official values for the new unit
-  const PRESET_MAP = { rimowa: RIMOWA_ORIGINAL_CABIN, 'rimowa-s': RIMOWA_CABIN_S, 'rimowa-plus': RIMOWA_CABIN_PLUS };
-  const activePreset = document.querySelector('.preset-btn.active')?.dataset.preset;
-  if (activePreset && PRESET_MAP[activePreset]) {
-    const r = PRESET_MAP[activePreset][unit];
-    document.getElementById('input-h').value = r.h;
-    document.getElementById('input-w').value = r.w;
-    document.getElementById('input-d').value = r.d;
-  } else {
-    // Convert dimension inputs
-    ['input-h', 'input-w', 'input-d'].forEach(id => {
-      const val = parseFloat(document.getElementById(id).value);
-      if (!val) return;
-      document.getElementById(id).value = unit === 'in' ? cmToIn(val) : Math.round(inToCm(val));
-    });
-  }
+  // Convert dimension inputs
+  ['input-h', 'input-w', 'input-d'].forEach(id => {
+    const val = parseFloat(document.getElementById(id).value);
+    if (!val) return;
+    document.getElementById(id).value = unit === 'in' ? cmToIn(val) : Math.round(inToCm(val));
+  });
 
   // Convert weight input
   const wEl = document.getElementById('input-weight');
@@ -390,6 +370,7 @@ function setUnit(unit) {
   document.querySelectorAll('.unit-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.unit === unit);
   });
+  updatePresetNote();
 }
 
 function update() {
@@ -398,8 +379,17 @@ function update() {
   renderTable(state);
 }
 
+function updatePresetNote() {
+  const unit = document.querySelector('.unit-btn.active')?.dataset.unit || 'cm';
+  const activePreset = document.querySelector('.preset-btn.active')?.dataset.preset;
+  const PRESET_MAP = { rimowa: RIMOWA_ORIGINAL_CABIN, 'rimowa-s': RIMOWA_CABIN_S, 'rimowa-plus': RIMOWA_CABIN_PLUS };
+  const show = unit === 'in' && !!PRESET_MAP[activePreset];
+  document.getElementById('preset-inch-note').classList.toggle('visible', show);
+}
+
 function init() {
   readFromURL();
+  updatePresetNote();
 
   // Preset buttons
   document.querySelectorAll('.preset-btn').forEach(btn => {
@@ -425,6 +415,7 @@ function init() {
     document.getElementById(id).addEventListener('input', () => {
       document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
       document.querySelector('[data-preset="custom"]').classList.add('active');
+      updatePresetNote();
       update();
     });
   });

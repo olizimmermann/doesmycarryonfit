@@ -143,6 +143,15 @@ main { flex: 1; padding: 28px 0 48px; }
   border: 1.5px dashed var(--text-muted);
   border-radius: var(--radius-sm);
 }
+.preset-inch-note {
+  display: none;
+  font-size: .72rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+.preset-inch-note.visible {
+  display: block;
+}
 
 .dimension-inputs {
   display: grid;
