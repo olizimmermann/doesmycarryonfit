@@ -9,6 +9,30 @@ const RIMOWA_ORIGINAL_CABIN = {
   cm: { h: 55,   w: 40,   d: 23  },
   in: { h: 21.7, w: 15.8, d: 9.1 },
 };
+const RIMOWA_CABIN_S = {
+  cm: { h: 55,   w: 40,   d: 20  },
+  in: { h: 21.7, w: 15.8, d: 7.9 },
+};
+const RIMOWA_CABIN_PLUS = {
+  cm: { h: 57,   w: 44,   d: 25  },
+  in: { h: 22.1, w: 17.8, d: 9.9 },
+};
+
+// ---------------------------------------------------------------------------
+// Preset detection — runs synchronously before first paint
+// ---------------------------------------------------------------------------
+{
+  const p = new URLSearchParams(location.search);
+  const unit = p.get('unit') || 'cm';
+  const h = parseFloat(p.get('h')), w = parseFloat(p.get('w')), d = parseFloat(p.get('d'));
+  const PRESET_MAP = { rimowa: RIMOWA_ORIGINAL_CABIN, 'rimowa-s': RIMOWA_CABIN_S, 'rimowa-plus': RIMOWA_CABIN_PLUS };
+  let active = 'rimowa';
+  if (p.has('h') || p.has('w') || p.has('d')) {
+    const match = Object.keys(PRESET_MAP).find(k => { const v = PRESET_MAP[k][unit]; return v.h === h && v.w === w && v.d === d; });
+    active = match || 'custom';
+  }
+  document.querySelector(`[data-preset="${active}"]`).classList.add('active');
+}
 
 // cm/in: official airline dimensions. kg/lbs: official weight limits. null = N/A.
 // Source: airline websites. Last verified: see GitHub issue tracker.
@@ -212,8 +236,12 @@ function readFromURL() {
 
   const isDefault = !p.has('h') && !p.has('w') && !p.has('d');
   if (!isDefault) {
-    document.querySelector('[data-preset="rimowa"]').classList.remove('active');
-    document.querySelector('[data-preset="custom"]').classList.add('active');
+    const unit = document.querySelector('.unit-btn.active')?.dataset.unit || 'cm';
+    const h = parseFloat(p.get('h')), w = parseFloat(p.get('w')), d = parseFloat(p.get('d'));
+    const PRESETS = { 'rimowa': RIMOWA_ORIGINAL_CABIN, 'rimowa-s': RIMOWA_CABIN_S, 'rimowa-plus': RIMOWA_CABIN_PLUS };
+    const matched = Object.entries(PRESETS).find(([, v]) => v[unit].h === h && v[unit].w === w && v[unit].d === d);
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`[data-preset="${matched ? matched[0] : 'custom'}"]`).classList.add('active');
   }
 }
 
@@ -309,9 +337,15 @@ function renderTable(state) {
 
 function setPreset(preset) {
   document.querySelectorAll('.preset-btn').forEach(b => b.classList.toggle('active', b.dataset.preset === preset));
-  if (preset === 'rimowa') {
+  const PRESETS = {
+    'rimowa':       RIMOWA_ORIGINAL_CABIN,
+    'rimowa-s':     RIMOWA_CABIN_S,
+    'rimowa-plus':  RIMOWA_CABIN_PLUS,
+  };
+  const data = PRESETS[preset];
+  if (data) {
     const unit = document.querySelector('.unit-btn.active')?.dataset.unit || 'cm';
-    const r = RIMOWA_ORIGINAL_CABIN[unit];
+    const r = data[unit];
     document.getElementById('input-h').value = r.h;
     document.getElementById('input-w').value = r.w;
     document.getElementById('input-d').value = r.d;
@@ -378,7 +412,7 @@ function init() {
   // Dimension / weight inputs — switch to custom preset on any manual edit
   ['input-h', 'input-w', 'input-d', 'input-weight'].forEach(id => {
     document.getElementById(id).addEventListener('input', () => {
-      document.querySelector('[data-preset="rimowa"]').classList.remove('active');
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
       document.querySelector('[data-preset="custom"]').classList.add('active');
       update();
     });

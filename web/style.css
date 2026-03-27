@@ -108,10 +108,19 @@ main { flex: 1; padding: 28px 0 48px; }
 
 .presets {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 6px;
   margin-bottom: 20px;
 }
-
+.presets-brand {
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-right: 2px;
+}
 .preset-btn {
   font-size: .8rem;
   font-weight: 500;
@@ -129,6 +138,11 @@ main { flex: 1; padding: 28px 0 48px; }
   color: #fff;
 }
 .preset-btn:hover:not(.active) { border-color: var(--text); color: var(--text); }
+.preset-btn--custom {
+  margin-left: 6px;
+  border: 1.5px dashed var(--text-muted);
+  border-radius: var(--radius-sm);
+}
 
 .dimension-inputs {
   display: grid;
