@@ -357,12 +357,22 @@ function setUnit(unit) {
   const prev = document.querySelector('.unit-btn.active')?.dataset.unit || 'cm';
   if (unit === prev) return;
 
-  // Convert dimension inputs
-  ['input-h', 'input-w', 'input-d'].forEach(id => {
-    const val = parseFloat(document.getElementById(id).value);
-    if (!val) return;
-    document.getElementById(id).value = unit === 'in' ? cmToIn(val) : Math.round(inToCm(val));
-  });
+  // If a luggage preset is active, use its official values for the new unit
+  const PRESET_MAP = { rimowa: RIMOWA_ORIGINAL_CABIN, 'rimowa-s': RIMOWA_CABIN_S, 'rimowa-plus': RIMOWA_CABIN_PLUS };
+  const activePreset = document.querySelector('.preset-btn.active')?.dataset.preset;
+  if (activePreset && PRESET_MAP[activePreset]) {
+    const r = PRESET_MAP[activePreset][unit];
+    document.getElementById('input-h').value = r.h;
+    document.getElementById('input-w').value = r.w;
+    document.getElementById('input-d').value = r.d;
+  } else {
+    // Convert dimension inputs
+    ['input-h', 'input-w', 'input-d'].forEach(id => {
+      const val = parseFloat(document.getElementById(id).value);
+      if (!val) return;
+      document.getElementById(id).value = unit === 'in' ? cmToIn(val) : Math.round(inToCm(val));
+    });
+  }
 
   // Convert weight input
   const wEl = document.getElementById('input-weight');
