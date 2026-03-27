@@ -157,25 +157,15 @@ function checkAirline(bag, airline, cabinClass, unit) {
   const bagDims = [bag.h, bag.w, bag.d].sort((a, b) => b - a);
   const bagSum  = bag.h + bag.w + bag.d;
 
+  // bag is always in cm (normalized in getState)
   let dimFits;
-  if (unit === 'in') {
-    if (airline.hIn !== null) {
-      const airDims = [airline.hIn, airline.wIn, airline.dIn].sort((a, b) => b - a);
-      dimFits = bagDims[0] <= airDims[0] && bagDims[1] <= airDims[1] && bagDims[2] <= airDims[2];
-    } else if (airline.sumIn !== null) {
-      dimFits = bagSum <= airline.sumIn;
-    } else {
-      dimFits = true;
-    }
+  if (airline.h !== null) {
+    const airDims = [airline.h, airline.w, airline.d].sort((a, b) => b - a);
+    dimFits = bagDims[0] <= airDims[0] && bagDims[1] <= airDims[1] && bagDims[2] <= airDims[2];
+  } else if (airline.sum !== null) {
+    dimFits = bagSum <= airline.sum;
   } else {
-    if (airline.h !== null) {
-      const airDims = [airline.h, airline.w, airline.d].sort((a, b) => b - a);
-      dimFits = bagDims[0] <= airDims[0] && bagDims[1] <= airDims[1] && bagDims[2] <= airDims[2];
-    } else if (airline.sum !== null) {
-      dimFits = bagSum <= airline.sum;
-    } else {
-      dimFits = true; // no data — assume pass
-    }
+    dimFits = true; // no data — assume pass
   }
 
   const weightLimit = unit === 'in'
@@ -195,10 +185,21 @@ function checkAirline(bag, airline, cabinClass, unit) {
 
 function getState() {
   const unit = document.querySelector('.unit-btn.active')?.dataset.unit || 'cm';
+  const h = parseFloat(document.getElementById('input-h').value) || RIMOWA_ORIGINAL_CABIN[unit].h;
+  const w = parseFloat(document.getElementById('input-w').value) || RIMOWA_ORIGINAL_CABIN[unit].w;
+  const d = parseFloat(document.getElementById('input-d').value) || RIMOWA_ORIGINAL_CABIN[unit].d;
+
+  // For comparison, always use cm. If a preset is active use its cm values directly
+  // (avoids round-trip conversion errors from official inch values like 21.7→55.1cm).
+  const PRESET_MAP = { rimowa: RIMOWA_ORIGINAL_CABIN, 'rimowa-s': RIMOWA_CABIN_S, 'rimowa-plus': RIMOWA_CABIN_PLUS };
+  const activePreset = document.querySelector('.preset-btn.active')?.dataset.preset;
+  const cmPreset = activePreset && PRESET_MAP[activePreset] ? PRESET_MAP[activePreset].cm : null;
+  const cmH = unit === 'in' ? (cmPreset ? cmPreset.h : inToCm(h)) : h;
+  const cmW = unit === 'in' ? (cmPreset ? cmPreset.w : inToCm(w)) : w;
+  const cmD = unit === 'in' ? (cmPreset ? cmPreset.d : inToCm(d)) : d;
+
   return {
-    h:       parseFloat(document.getElementById('input-h').value)      || RIMOWA_ORIGINAL_CABIN[unit].h,
-    w:       parseFloat(document.getElementById('input-w').value)      || RIMOWA_ORIGINAL_CABIN[unit].w,
-    d:       parseFloat(document.getElementById('input-d').value)      || RIMOWA_ORIGINAL_CABIN[unit].d,
+    h, w, d, cmH, cmW, cmD,
     weight:  parseFloat(document.getElementById('input-weight').value) || null,
     cls:     document.querySelector('.class-btn.active').dataset.cls,
     filter:  document.querySelector('.filter-tab.active').dataset.filter,
@@ -277,7 +278,7 @@ function formatDims(airline, unit) {
 
 function renderTable(state) {
   const tbody = document.getElementById('results-body');
-  const bag = { h: state.h, w: state.w, d: state.d, weight: state.weight };
+  const bag = { h: state.cmH, w: state.cmW, d: state.cmD, weight: state.weight };
   const weightUnit = state.unit === 'in' ? 'lbs' : 'kg';
 
   let passCount = 0, failCount = 0;
@@ -357,12 +358,22 @@ function setUnit(unit) {
   const prev = document.querySelector('.unit-btn.active')?.dataset.unit || 'cm';
   if (unit === prev) return;
 
-  // Convert dimension inputs
-  ['input-h', 'input-w', 'input-d'].forEach(id => {
-    const val = parseFloat(document.getElementById(id).value);
-    if (!val) return;
-    document.getElementById(id).value = unit === 'in' ? cmToIn(val) : Math.round(inToCm(val));
-  });
+  // If a luggage preset is active, use its official values for the new unit
+  const PRESET_MAP = { rimowa: RIMOWA_ORIGINAL_CABIN, 'rimowa-s': RIMOWA_CABIN_S, 'rimowa-plus': RIMOWA_CABIN_PLUS };
+  const activePreset = document.querySelector('.preset-btn.active')?.dataset.preset;
+  if (activePreset && PRESET_MAP[activePreset]) {
+    const r = PRESET_MAP[activePreset][unit];
+    document.getElementById('input-h').value = r.h;
+    document.getElementById('input-w').value = r.w;
+    document.getElementById('input-d').value = r.d;
+  } else {
+    // Convert dimension inputs
+    ['input-h', 'input-w', 'input-d'].forEach(id => {
+      const val = parseFloat(document.getElementById(id).value);
+      if (!val) return;
+      document.getElementById(id).value = unit === 'in' ? cmToIn(val) : Math.round(inToCm(val));
+    });
+  }
 
   // Convert weight input
   const wEl = document.getElementById('input-weight');
