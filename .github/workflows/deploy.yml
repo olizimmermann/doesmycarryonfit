@@ -14,14 +14,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Pull latest nginx image
-        run: docker compose -p doesmycarryonfit pull
+        run: docker compose -p doesmycarryonfit -f docker-compose.yml pull
 
       - name: Deploy
-        run: APP_VERSION=$(git rev-parse --short HEAD) docker compose -p doesmycarryonfit up -d --force-recreate
+        run: APP_VERSION=$(git rev-parse --short HEAD) docker compose -p doesmycarryonfit -f docker-compose.yml up -d --force-recreate
 
       - name: Verify
         run: |
           sleep 3
           status=$(docker inspect --format='{{.State.Health.Status}}' doesmycarryonfit-web-1 2>/dev/null || echo "no-healthcheck")
           echo "Container health: $status"
-          docker compose -p doesmycarryonfit ps
+          docker compose -p doesmycarryonfit -f docker-compose.yml ps
