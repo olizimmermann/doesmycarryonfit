@@ -433,6 +433,7 @@ function init() {
   const searchEl = document.getElementById('airline-search');
   searchEl.addEventListener('input', update);
   searchEl.addEventListener('search', () => { searchEl.blur(); });
+  searchEl.addEventListener('keydown', e => { if (e.key === 'Enter') searchEl.blur(); });
 
   // Copy link
   document.getElementById('copy-link-btn').addEventListener('click', () => {
@@ -457,6 +458,10 @@ function init() {
   });
 
   update();
+
+  if (window.APP_VERSION) {
+    document.getElementById('footer-version').textContent = 'v' + window.APP_VERSION;
+  }
 }
 
 document.addEventListener('DOMContentLoaded', init);
