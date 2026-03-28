@@ -4,19 +4,15 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
-    environment:
-      - APP_VERSION=${APP_VERSION:-unknown}
     volumes:
       - ./web:/usr/share/nginx/html:ro
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/version.conf.template:/etc/nginx/templates/version.conf.template:ro
     # Harden the container
     read_only: true
     tmpfs:
       - /var/cache/nginx:mode=755
       - /var/run:mode=755
       - /tmp:mode=755
-      - /etc/nginx/conf.d:mode=755
     security_opt:
       - no-new-privileges:true
     cap_drop:
