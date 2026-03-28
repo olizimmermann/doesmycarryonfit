@@ -16,8 +16,11 @@ jobs:
       - name: Pull latest nginx image
         run: docker compose -p doesmycarryonfit -f docker-compose.yml pull
 
+      - name: Write version
+        run: echo "window.APP_VERSION='$(git rev-parse --short HEAD)';" > web/version.js
+
       - name: Deploy
-        run: APP_VERSION=$(git rev-parse --short HEAD) docker compose -p doesmycarryonfit -f docker-compose.yml up -d --force-recreate
+        run: docker compose -p doesmycarryonfit -f docker-compose.yml up -d --force-recreate
 
       - name: Verify
         run: |
