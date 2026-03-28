@@ -430,7 +430,9 @@ function init() {
   });
 
   // Search
-  document.getElementById('airline-search').addEventListener('input', update);
+  const searchEl = document.getElementById('airline-search');
+  searchEl.addEventListener('input', update);
+  searchEl.addEventListener('search', () => { searchEl.blur(); });
 
   // Copy link
   document.getElementById('copy-link-btn').addEventListener('click', () => {
