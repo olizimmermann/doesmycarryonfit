@@ -390,7 +390,7 @@ function setUnit(unit) {
 let _logTimer = null;
 function logEvent(event, extra) {
   const p = new URLSearchParams({ event, ...extra });
-  try { navigator.sendBeacon('/log?' + p.toString()); } catch (_) { /* silent */ }
+  new Image().src = '/status?' + p.toString();
 }
 
 // Debounced check logger: fires once after user stops changing dimensions
