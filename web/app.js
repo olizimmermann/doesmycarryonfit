@@ -72,7 +72,7 @@ const AIRLINES = [
   { name: "easyJet",               h:56,  w:45,  d:25,  sum:126, hIn:22.0, wIn:17.7, dIn:9.8,  sumIn:49.6, ecoKg:15,   bizKg:15,   ecoLbs:33,   bizLbs:33   },
   { name: "Edelweiss",             h:55,  w:40,  d:23,  sum:118, hIn:21.5, wIn:15.7, dIn:9.0,  sumIn:46.4, ecoKg:8,    bizKg:8,    ecoLbs:17.6, bizLbs:17.6 },
   { name: "EgyptAir",              h:55,  w:40,  d:23,  sum:118, hIn:21.5, wIn:15.7, dIn:9.0,  sumIn:46.4, ecoKg:8,    bizKg:8,    ecoLbs:17.6, bizLbs:17.6 },
-  { name: "El Al",                 h:56,  w:45,  d:25,  sum:115, hIn:22.0, wIn:17.7, dIn:9.8,  sumIn:45.2, ecoKg:8,    bizKg:null, ecoLbs:17.6, bizLbs:null },
+  { name: "El Al",                 h:56,  w:45,  d:25,  sum:126, hIn:22.0, wIn:17.7, dIn:9.8,  sumIn:49.6, ecoKg:8,    bizKg:null, ecoLbs:17.6, bizLbs:null },
   { name: "Emirates",              h:55,  w:38,  d:22,  sum:115, hIn:21.5, wIn:14.9, dIn:8.6,  sumIn:45.2, ecoKg:7,    bizKg:10,   ecoLbs:15.4, bizLbs:22   },
   { name: "Ethiopian Airlines",    h:55,  w:40,  d:23,  sum:118, hIn:21.5, wIn:15.7, dIn:9.0,  sumIn:46.4, ecoKg:7,    bizKg:7,    ecoLbs:15.4, bizLbs:15.4 },
   { name: "Etihad",                h:56,  w:36,  d:23,  sum:115, hIn:22.0, wIn:14.1, dIn:9.0,  sumIn:45.2, ecoKg:7,    bizKg:12,   ecoLbs:15.4, bizLbs:26.4 },
@@ -100,7 +100,7 @@ const AIRLINES = [
   { name: "Malaysia Airlines",     h:56,  w:36,  d:23,  sum:115, hIn:22.0, wIn:14.1, dIn:9.0,  sumIn:45.2, ecoKg:7,    bizKg:7,    ecoLbs:15.4, bizLbs:15.4 },
   { name: "Middle East Airline",   h:56,  w:40,  d:25,  sum:121, hIn:22.0, wIn:15.7, dIn:9.8,  sumIn:47.6, ecoKg:10,   bizKg:10,   ecoLbs:22,   bizLbs:22   },
   { name: "Norwegian",             h:55,  w:40,  d:23,  sum:118, hIn:21.5, wIn:15.7, dIn:9.0,  sumIn:46.4, ecoKg:10,   bizKg:15,   ecoLbs:22,   bizLbs:33   },
-  { name: "Olympic Air",           h:55,  w:40,  d:23,  sum:118, hIn:21.5, wIn:15.7, dIn:9.0,  sumIn:46.4, ecoKg:10,   bizKg:15,   ecoLbs:17.6, bizLbs:17.6 },
+  { name: "Olympic Air",           h:55,  w:40,  d:23,  sum:118, hIn:21.5, wIn:15.7, dIn:9.0,  sumIn:46.4, ecoKg:10,   bizKg:15,   ecoLbs:22,   bizLbs:33   },
   { name: "Oman Air",              h:null,w:null,d:null,sum:115, hIn:null, wIn:null, dIn:null, sumIn:45.2, ecoKg:7,    bizKg:7,    ecoLbs:15.4, bizLbs:15.4 },
   { name: "Philippine Airlines",   h:56,  w:36,  d:23,  sum:115, hIn:22.0, wIn:14.1, dIn:9.0,  sumIn:45.2, ecoKg:7,    bizKg:null, ecoLbs:15.4, bizLbs:null },
   { name: "Porter Airlines",       h:55,  w:40,  d:23,  sum:118, hIn:21.5, wIn:15.7, dIn:9.0,  sumIn:46.4, ecoKg:null, bizKg:null, ecoLbs:null, bizLbs:null },
@@ -136,6 +136,13 @@ const AIRLINES = [
 // when converted back. e.g. 55cm → 21.6in (not 21.7) → 54.9cm ≤ 55cm ✓
 function cmToIn(cm) { return Math.floor(cm / 2.54 * 10) / 10; }
 function inToCm(inches) { return Math.round(inches * 2.54 * 10) / 10; }
+
+// ---------------------------------------------------------------------------
+// HTML escaping
+// ---------------------------------------------------------------------------
+
+const _escEl = document.createElement('span');
+function esc(str) { _escEl.textContent = str; return _escEl.innerHTML; }
 
 // ---------------------------------------------------------------------------
 // Check logic
@@ -211,11 +218,14 @@ function readFromURL() {
     document.querySelectorAll('.dim-unit').forEach(el => { el.textContent = unit; });
   }
 
-  if (p.has('h'))   document.getElementById('input-h').value      = p.get('h');
-  if (p.has('w'))   document.getElementById('input-w').value      = p.get('w');
-  if (p.has('d'))   document.getElementById('input-d').value      = p.get('d');
-  if (p.has('kg'))  document.getElementById('input-weight').value = p.get('kg');
-  if (p.has('lbs')) document.getElementById('input-weight').value = p.get('lbs');
+  const clampDim = v => { const n = parseFloat(v); return (isFinite(n) && n > 0 && n <= 200) ? n : ''; };
+  const clampWt  = v => { const n = parseFloat(v); return (isFinite(n) && n > 0 && n <= 200) ? n : ''; };
+
+  if (p.has('h'))   document.getElementById('input-h').value      = clampDim(p.get('h'));
+  if (p.has('w'))   document.getElementById('input-w').value      = clampDim(p.get('w'));
+  if (p.has('d'))   document.getElementById('input-d').value      = clampDim(p.get('d'));
+  if (p.has('kg'))  document.getElementById('input-weight').value = clampWt(p.get('kg'));
+  if (p.has('lbs')) document.getElementById('input-weight').value = clampWt(p.get('lbs'));
 
   // Sync weight-unit label and note after unit is set
   const activeUnit = document.querySelector('.unit-btn.active')?.dataset.unit || 'cm';
@@ -303,7 +313,7 @@ function renderTable(state) {
 
     rows.push(`
       <tr class="${overallFail ? 'row-fail' : 'row-pass'}">
-        <td class="col-airline">${airline.name}</td>
+        <td class="col-airline">${esc(airline.name)}</td>
         <td class="col-dims">${formatDims(airline, state.unit)}</td>
         <td class="col-weight">${weightCell}</td>
         <td class="col-status"><span class="status-badge ${statusClass}"><span class="status-icon">${statusIcon}</span>${statusText}</span></td>
@@ -373,10 +383,38 @@ function setUnit(unit) {
   updatePresetNote();
 }
 
+// ---------------------------------------------------------------------------
+// Usage logging — fire-and-forget beacons to /log, picked up by Nginx access log
+// ---------------------------------------------------------------------------
+
+let _logTimer = null;
+function logEvent(event, extra) {
+  const p = new URLSearchParams({ event, ...extra });
+  try { navigator.sendBeacon('/log?' + p.toString()); } catch (_) { /* silent */ }
+}
+
+// Debounced check logger: fires once after user stops changing dimensions
+function logCheck() {
+  clearTimeout(_logTimer);
+  _logTimer = setTimeout(() => {
+    const s = getState();
+    const pass = parseInt(document.getElementById('count-pass').textContent) || 0;
+    const fail = parseInt(document.getElementById('count-fail').textContent) || 0;
+    const preset = document.querySelector('.preset-btn.active')?.dataset.preset || 'custom';
+    logEvent('check', {
+      h: s.cmH, w: s.cmW, d: s.cmD,
+      unit: s.unit, cls: s.cls, preset,
+      pass, fail,
+      ...(s.weight ? { weight: s.weight } : {}),
+    });
+  }, 800);
+}
+
 function update() {
   const state = getState();
   pushURL(state);
   renderTable(state);
+  logCheck();
 }
 
 function updatePresetNote() {
@@ -393,17 +431,26 @@ function init() {
 
   // Preset buttons
   document.querySelectorAll('.preset-btn').forEach(btn => {
-    btn.addEventListener('click', () => { setPreset(btn.dataset.preset); update(); });
+    btn.addEventListener('click', () => {
+      logEvent('preset', { preset: btn.dataset.preset });
+      setPreset(btn.dataset.preset);
+      update();
+    });
   });
 
   // Unit toggle
   document.querySelectorAll('.unit-btn').forEach(btn => {
-    btn.addEventListener('click', () => { setUnit(btn.dataset.unit); update(); });
+    btn.addEventListener('click', () => {
+      logEvent('unit', { unit: btn.dataset.unit });
+      setUnit(btn.dataset.unit);
+      update();
+    });
   });
 
   // Class toggle
   document.querySelectorAll('.class-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+      logEvent('class', { cls: btn.dataset.cls });
       document.querySelectorAll('.class-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       update();
@@ -423,6 +470,7 @@ function init() {
   // Filter tabs
   document.querySelectorAll('.filter-tab').forEach(tab => {
     tab.addEventListener('click', () => {
+      logEvent('filter', { filter: tab.dataset.filter });
       document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       update();
@@ -437,6 +485,7 @@ function init() {
 
   // Copy link
   document.getElementById('copy-link-btn').addEventListener('click', () => {
+    logEvent('copy_link');
     const state = getState();
     const url   = buildShareURL(state);
     navigator.clipboard.writeText(url).then(() => {
@@ -458,6 +507,16 @@ function init() {
   });
 
   update();
+
+  // Log initial page load with entry state
+  const initState = getState();
+  const initPreset = document.querySelector('.preset-btn.active')?.dataset.preset || 'custom';
+  logEvent('pageview', {
+    preset: initPreset, cls: initState.cls, unit: initState.unit,
+    h: initState.cmH, w: initState.cmW, d: initState.cmD,
+    ...(initState.weight ? { weight: initState.weight } : {}),
+    referrer: document.referrer || 'direct',
+  });
 
   if (window.APP_VERSION) {
     document.getElementById('footer-version').textContent = 'v' + window.APP_VERSION;
