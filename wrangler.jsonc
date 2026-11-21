@@ -1,0 +1,43 @@
+// Cloudflare Workers config: static site from ./web + a tiny Worker for /status.
+// Docs: https://developers.cloudflare.com/workers/static-assets/
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "doesmycarryonfit",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-11-01",
+
+  // Writes web/version.js (footer version) before every dev/deploy run.
+  "build": { "command": "python3 scripts/build.py" },
+
+  "assets": {
+    "directory": "./web",
+    "binding": "ASSETS",
+    // "/" serves index.html; /privacy.html redirects (307) to /privacy.
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none",
+    // Only the beacon invokes the Worker. Everything else is served straight
+    // from the asset layer: free, unlimited, and unaffected if the Worker's
+    // daily free quota (100k requests) is ever exhausted.
+    "run_worker_first": ["/status"]
+  },
+
+  // Per-IP limit for the beacon (replaces nginx limit_req). Counter lives at the
+  // edge location only; nothing is persisted.
+  "ratelimits": [
+    { "name": "BEACON_LIMITER", "namespace_id": "1001", "simple": { "limit": 120, "period": 60 } }
+  ],
+
+  // Workers Logs: stores ONLY what the Worker console.log()s (the sanitised
+  // beacon events). Invocation logs are off so URLs/headers/IPs are not stored.
+  "observability": {
+    "enabled": true,
+    "logs": { "enabled": true, "invocation_logs": false, "head_sampling_rate": 1 }
+  },
+
+  "workers_dev": true,
+  "preview_urls": false
+
+  // Cut-over to the real domain: uncomment AFTER testing on *.workers.dev and
+  // after deleting the old A record pointing at the VPS, then set workers_dev false.
+  // , "routes": [{ "pattern": "doesmycarryon.fit", "custom_domain": true }]
+}

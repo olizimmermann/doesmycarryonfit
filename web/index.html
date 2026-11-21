@@ -31,7 +31,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
   <title>Does My Carry-On Fit? — Cabin Size Checker for 94 Airlines</title>
-  <link rel="stylesheet" href="style.css?v=14">
+  <link rel="stylesheet" href="style.css?v=15">
 
   <!-- Structured data -->
   <script type="application/ld+json">
@@ -169,11 +169,11 @@
                 <th scope="col">Airline</th>
                 <th scope="col" class="col-dims">Max Dimensions (H × W × D)</th>
                 <th scope="col">Weight Limit</th>
-                <th scope="col" style="text-align:right">Fits?</th>
+                <th scope="col" class="th-right">Fits?</th>
               </tr>
             </thead>
             <tbody id="results-body">
-              <tr><td colspan="4" style="padding:24px;text-align:center;color:var(--text-muted)">Loading…</td></tr>
+              <tr><td colspan="4" class="loading-cell">Loading…</td></tr>
             </tbody>
           </table>
         </div>
@@ -203,6 +203,6 @@
   </footer>
 
   <script src="/version.js"></script>
-  <script src="app.js?v=20"></script>
+  <script src="app.js?v=21"></script>
 </body>
 </html>

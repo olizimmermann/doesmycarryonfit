@@ -18,27 +18,38 @@ Default preset is the **Rimowa Original Cabin** (55 × 40 × 23 cm). Enter any c
 
 ## Running locally
 
-Requires [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/).
+Requires [Node.js](https://nodejs.org/) 20+ and Python 3.
 
 ```bash
 git clone https://github.com/olizimmermann/doesmycarryonfit.git
 cd doesmycarryonfit
-docker compose up
+npm ci
+npm run dev
 ```
 
-Open [http://localhost](http://localhost).
+Open [http://localhost:8787](http://localhost:8787).
 
 ## Deployment
 
-The service is designed to run on a VPS behind **Cloudflare**. Nginx is configured to accept connections only from [Cloudflare's IP ranges](https://www.cloudflare.com/ips/) — all other traffic is silently dropped (`444`).
+The site runs on **Cloudflare Workers** (free plan): the files in `web/` are served as
+[static assets](https://developers.cloudflare.com/workers/static-assets/) (free and unlimited),
+and a small Worker (`src/worker.js`) answers only the `/status` usage beacon.
+
+**Option A — Git integration (recommended, no API token stored anywhere):**
+Cloudflare dashboard → Workers & Pages → Create → Import a repository → select this repo.
+Deploy command: `npx wrangler deploy`. Every push to `main` deploys.
+
+**Option B — from your machine:**
 
 ```bash
-docker compose up -d
+npx wrangler login
+npm run deploy
 ```
 
-Point your Cloudflare DNS A record to your VPS IP. Set the proxy to **Proxied** (orange cloud). No SSL configuration is needed on the origin — Cloudflare handles TLS termination.
+Test on the `*.workers.dev` URL first. To go live on the real domain, delete the old DNS
+record for the apex, uncomment the `routes` entry in `wrangler.jsonc`, and deploy again.
 
-To keep the Cloudflare IP allowlist current, update the `geo` block in `nginx/nginx.conf` whenever Cloudflare publishes changes.
+Beacon events are visible under Workers & Pages → doesmycarryonfit → Observability → Logs.
 
 ## Data
 
@@ -52,10 +63,13 @@ If you spot an error or want to add an airline, [open an issue](https://github.c
 
 ```
 .
-├── docker-compose.yml
-├── nginx/
-│   └── nginx.conf          # Cloudflare IP allowlist, security headers, gzip
+├── wrangler.jsonc          # Cloudflare config: assets, beacon rate limit, logs
+├── src/
+│   └── worker.js           # /status beacon: validates, rate-limits, logs
+├── scripts/
+│   └── build.py            # writes web/version.js (commit hash)
 └── web/
+    ├── _headers            # security + cache headers
     ├── index.html
     ├── style.css
     ├── app.js              # Airline data + check logic

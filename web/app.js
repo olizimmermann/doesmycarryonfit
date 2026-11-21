@@ -384,7 +384,7 @@ function setUnit(unit) {
 }
 
 // ---------------------------------------------------------------------------
-// Usage logging — fire-and-forget beacons to /log, picked up by Nginx access log
+// Usage logging — fire-and-forget beacons to /status, logged by the Worker (src/worker.js)
 // ---------------------------------------------------------------------------
 
 let _logTimer = null;

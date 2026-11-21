@@ -602,3 +602,18 @@ footer {
   .unit-btn      { flex: 1; justify-content: center; }
   .copy-link-btn { width: 100%; justify-content: center; }
 }
+
+/* Formerly inline styles (blocked by the style-src 'self' CSP) */
+.home-link    { text-decoration: none; color: inherit; }
+.th-right     { text-align: right; }
+.loading-cell { padding: 24px; text-align: center; color: var(--text-muted); }
+
+.legal            { max-width: 660px; }
+.legal-narrow     { max-width: 600px; }
+.legal h2         { font-size: 1.1rem; font-weight: 700; margin-bottom: 24px; }
+.legal h3         { font-size: .95rem; font-weight: 600; margin: 28px 0 8px; }
+.legal h3:first-child { margin-top: 0; }
+.legal p, .legal li { font-size: .875rem; line-height: 1.8; color: var(--text); }
+.legal ul         { margin: 8px 0 8px 20px; }
+.legal li         { margin-bottom: 4px; }
+.legal .updated   { font-size: .78rem; color: var(--text-muted); margin-top: 32px; }
