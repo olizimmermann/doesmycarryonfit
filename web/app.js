@@ -383,38 +383,10 @@ function setUnit(unit) {
   updatePresetNote();
 }
 
-// ---------------------------------------------------------------------------
-// Usage logging — fire-and-forget beacons to /status, logged by the Worker (src/worker.js)
-// ---------------------------------------------------------------------------
-
-let _logTimer = null;
-function logEvent(event, extra) {
-  const p = new URLSearchParams({ event, ...extra });
-  new Image().src = '/status?' + p.toString();
-}
-
-// Debounced check logger: fires once after user stops changing dimensions
-function logCheck() {
-  clearTimeout(_logTimer);
-  _logTimer = setTimeout(() => {
-    const s = getState();
-    const pass = parseInt(document.getElementById('count-pass').textContent) || 0;
-    const fail = parseInt(document.getElementById('count-fail').textContent) || 0;
-    const preset = document.querySelector('.preset-btn.active')?.dataset.preset || 'custom';
-    logEvent('check', {
-      h: s.cmH, w: s.cmW, d: s.cmD,
-      unit: s.unit, cls: s.cls, preset,
-      pass, fail,
-      ...(s.weight ? { weight: s.weight } : {}),
-    });
-  }, 800);
-}
-
 function update() {
   const state = getState();
   pushURL(state);
   renderTable(state);
-  logCheck();
 }
 
 function updatePresetNote() {
@@ -432,7 +404,6 @@ function init() {
   // Preset buttons
   document.querySelectorAll('.preset-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      logEvent('preset', { preset: btn.dataset.preset });
       setPreset(btn.dataset.preset);
       update();
     });
@@ -441,7 +412,6 @@ function init() {
   // Unit toggle
   document.querySelectorAll('.unit-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      logEvent('unit', { unit: btn.dataset.unit });
       setUnit(btn.dataset.unit);
       update();
     });
@@ -450,7 +420,6 @@ function init() {
   // Class toggle
   document.querySelectorAll('.class-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      logEvent('class', { cls: btn.dataset.cls });
       document.querySelectorAll('.class-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       update();
@@ -470,7 +439,6 @@ function init() {
   // Filter tabs
   document.querySelectorAll('.filter-tab').forEach(tab => {
     tab.addEventListener('click', () => {
-      logEvent('filter', { filter: tab.dataset.filter });
       document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
       tab.classList.add('active');
       update();
@@ -485,7 +453,6 @@ function init() {
 
   // Copy link
   document.getElementById('copy-link-btn').addEventListener('click', () => {
-    logEvent('copy_link');
     const state = getState();
     const url   = buildShareURL(state);
     navigator.clipboard.writeText(url).then(() => {
@@ -507,16 +474,6 @@ function init() {
   });
 
   update();
-
-  // Log initial page load with entry state
-  const initState = getState();
-  const initPreset = document.querySelector('.preset-btn.active')?.dataset.preset || 'custom';
-  logEvent('pageview', {
-    preset: initPreset, cls: initState.cls, unit: initState.unit,
-    h: initState.cmH, w: initState.cmW, d: initState.cmD,
-    ...(initState.weight ? { weight: initState.weight } : {}),
-    referrer: document.referrer || 'direct',
-  });
 
   if (window.APP_VERSION) {
     document.getElementById('footer-version').textContent = 'v' + window.APP_VERSION;

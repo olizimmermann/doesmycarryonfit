@@ -31,9 +31,9 @@ Open [http://localhost:8787](http://localhost:8787).
 
 ## Deployment
 
-The site runs on **Cloudflare Workers** (free plan): the files in `web/` are served as
-[static assets](https://developers.cloudflare.com/workers/static-assets/) (free and unlimited),
-and a small Worker (`src/worker.js`) answers only the `/status` usage beacon.
+The site runs on **Cloudflare Workers** (free plan) as pure
+[static assets](https://developers.cloudflare.com/workers/static-assets/) — the files in `web/`
+are served directly from the edge, with no Worker code and no request limit.
 
 **Option A — Git integration (recommended, no API token stored anywhere):**
 Cloudflare dashboard → Workers & Pages → Create → Import a repository → select this repo.
@@ -49,8 +49,6 @@ npm run deploy
 Test on the `*.workers.dev` URL first. To go live on the real domain, delete the old DNS
 record for the apex, uncomment the `routes` entry in `wrangler.jsonc`, and deploy again.
 
-Beacon events are visible under Workers & Pages → doesmycarryonfit → Observability → Logs.
-
 ## Data
 
 Airline cabin policies are stored in `web/app.js`. The data was compiled from official airline websites and is provided as-is.
@@ -63,9 +61,7 @@ If you spot an error or want to add an airline, [open an issue](https://github.c
 
 ```
 .
-├── wrangler.jsonc          # Cloudflare config: assets, beacon rate limit, logs
-├── src/
-│   └── worker.js           # /status beacon: validates, rate-limits, logs
+├── wrangler.jsonc          # Cloudflare config (static assets)
 ├── scripts/
 │   └── build.py            # writes web/version.js (commit hash)
 └── web/
